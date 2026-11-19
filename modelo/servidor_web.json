@@ -1,0 +1,701 @@
+{
+  "modelName": "Main Model",
+  "places": [
+    {
+      "name": "Fonte",
+      "initialMarking": 1,
+      "stringMarking": "1",
+      "initialStringMarking": "1",
+      "id": "p1",
+      "x": 60,
+      "y": 160
+    },
+    {
+      "name": "Pendente",
+      "initialMarking": 0,
+      "stringMarking": "0",
+      "initialStringMarking": "0",
+      "id": "p2",
+      "x": 270,
+      "y": 160
+    },
+    {
+      "name": "Vagas",
+      "initialMarking": 20,
+      "stringMarking": "K_WEB",
+      "initialStringMarking": "K_WEB",
+      "id": "p3",
+      "x": 375,
+      "y": 50,
+      "labelX": 375,
+      "labelY": 10
+    },
+    {
+      "name": "Fila_Web",
+      "initialMarking": 0,
+      "stringMarking": "0",
+      "initialStringMarking": "0",
+      "id": "p4",
+      "x": 480,
+      "y": 160
+    },
+    {
+      "name": "Web_Livres",
+      "initialMarking": 12,
+      "stringMarking": "N_WEB",
+      "initialStringMarking": "N_WEB",
+      "id": "p5",
+      "x": 585,
+      "y": 270,
+      "labelX": 523,
+      "labelY": 270
+    },
+    {
+      "name": "Atendendo_Web",
+      "initialMarking": 0,
+      "stringMarking": "0",
+      "initialStringMarking": "0",
+      "id": "p6",
+      "x": 690,
+      "y": 160
+    },
+    {
+      "name": "Decisao",
+      "initialMarking": 0,
+      "stringMarking": "0",
+      "initialStringMarking": "0",
+      "id": "p7",
+      "x": 900,
+      "y": 160,
+      "labelX": 900,
+      "labelY": 120
+    },
+    {
+      "name": "Fila_BD",
+      "initialMarking": 0,
+      "stringMarking": "0",
+      "initialStringMarking": "0",
+      "id": "p8",
+      "x": 1005,
+      "y": 380
+    },
+    {
+      "name": "BD_Livres",
+      "initialMarking": 15,
+      "stringMarking": "N_BD",
+      "initialStringMarking": "N_BD",
+      "id": "p9",
+      "x": 742.5,
+      "y": 480
+    },
+    {
+      "name": "Consultando_BD",
+      "initialMarking": 0,
+      "stringMarking": "0",
+      "initialStringMarking": "0",
+      "id": "p10",
+      "x": 742.5,
+      "y": 380
+    }
+  ],
+  "definitions": [
+    {
+      "name": "AR",
+      "type": "DOUBLE",
+      "value": "0.05",
+      "id": "param-AR"
+    },
+    {
+      "name": "K_WEB",
+      "type": "INTEGER",
+      "value": "20",
+      "id": "param-K_WEB"
+    },
+    {
+      "name": "N_WEB",
+      "type": "INTEGER",
+      "value": "12",
+      "id": "param-N_WEB"
+    },
+    {
+      "name": "N_BD",
+      "type": "INTEGER",
+      "value": "15",
+      "id": "param-N_BD"
+    },
+    {
+      "name": "D_WEB",
+      "type": "DOUBLE",
+      "value": "100",
+      "id": "param-D_WEB"
+    },
+    {
+      "name": "D_BD",
+      "type": "DOUBLE",
+      "value": "100",
+      "id": "param-D_BD"
+    }
+  ],
+  "rewardMeasures": [
+    {
+      "name": "TP",
+      "expression": "(E{Atendendo_Web}/D_WEB)",
+      "id": "metric-TP",
+      "unit": "req/ms"
+    },
+    {
+      "name": "MRT",
+      "expression": "(E{Fila_Web}+E{Atendendo_Web}+E{Fila_BD}+E{Consultando_BD})/(E{Atendendo_Web}/D_WEB)",
+      "id": "metric-MRT",
+      "unit": "ms"
+    },
+    {
+      "name": "MQT",
+      "expression": "(E{Fila_Web}+E{Fila_BD})/(E{Atendendo_Web}/D_WEB)",
+      "id": "metric-MQT",
+      "unit": "ms"
+    },
+    {
+      "name": "MPT",
+      "expression": "(E{Atendendo_Web}+E{Consultando_BD})/(E{Atendendo_Web}/D_WEB)",
+      "id": "metric-MPT",
+      "unit": "ms"
+    },
+    {
+      "name": "U_WEB",
+      "expression": "(1-E{Web_Livres}/N_WEB)*100",
+      "id": "metric-U_WEB",
+      "unit": "%"
+    },
+    {
+      "name": "U_BD",
+      "expression": "(E{Consultando_BD}/N_BD)*100",
+      "id": "metric-U_BD",
+      "unit": "%"
+    },
+    {
+      "name": "BLQ_WEB",
+      "expression": "((E{Fila_BD}+E{Consultando_BD})/N_WEB)*100",
+      "id": "metric-BLQ_WEB",
+      "unit": "%"
+    },
+    {
+      "name": "DP",
+      "expression": "P{Vagas=0}*100",
+      "id": "metric-DP",
+      "unit": "%"
+    }
+  ],
+  "transitions": [
+    {
+      "name": "Chegada",
+      "type": "TIMED",
+      "firingPolicy": "SINGLE_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Fonte",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [
+        {
+          "type": "OUTPUT",
+          "place": "Fonte",
+          "multiplicity": 1,
+          "weight": 1
+        },
+        {
+          "type": "OUTPUT",
+          "place": "Pendente",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "inhibitorArcs": [],
+      "distribution": {
+        "type": "exponential",
+        "parameters": {
+          "Mean delay": "1/AR"
+        }
+      },
+      "id": "t1",
+      "x": 165,
+      "y": 160
+    },
+    {
+      "name": "Descartar",
+      "type": "IMMEDIATE",
+      "firingPolicy": "SINGLE_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Pendente",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [],
+      "inhibitorArcs": [
+        {
+          "type": "INHIBITOR",
+          "place": "Vagas",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "weight": 1,
+      "id": "t2",
+      "x": 270,
+      "y": 50,
+      "labelX": 270,
+      "labelY": 10
+    },
+    {
+      "name": "Admitir",
+      "type": "IMMEDIATE",
+      "firingPolicy": "SINGLE_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Pendente",
+          "multiplicity": 1,
+          "weight": 1
+        },
+        {
+          "type": "INPUT",
+          "place": "Vagas",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [
+        {
+          "type": "OUTPUT",
+          "place": "Fila_Web",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "inhibitorArcs": [],
+      "weight": 1,
+      "id": "t3",
+      "x": 375,
+      "y": 160
+    },
+    {
+      "name": "Inicia_Web",
+      "type": "IMMEDIATE",
+      "firingPolicy": "SINGLE_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Fila_Web",
+          "multiplicity": 1,
+          "weight": 1
+        },
+        {
+          "type": "INPUT",
+          "place": "Web_Livres",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [
+        {
+          "type": "OUTPUT",
+          "place": "Vagas",
+          "multiplicity": 1,
+          "weight": 1
+        },
+        {
+          "type": "OUTPUT",
+          "place": "Atendendo_Web",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "inhibitorArcs": [],
+      "weight": 1,
+      "id": "t4",
+      "x": 585,
+      "y": 160,
+      "labelX": 585,
+      "labelY": 120
+    },
+    {
+      "name": "Finaliza_Web",
+      "type": "TIMED",
+      "firingPolicy": "INFINITY_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Atendendo_Web",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [
+        {
+          "type": "OUTPUT",
+          "place": "Decisao",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "inhibitorArcs": [],
+      "distribution": {
+        "type": "exponential",
+        "parameters": {
+          "Mean delay": "D_WEB"
+        }
+      },
+      "id": "t5",
+      "x": 795,
+      "y": 160
+    },
+    {
+      "name": "Responde_Cache",
+      "type": "IMMEDIATE",
+      "firingPolicy": "SINGLE_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Decisao",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [
+        {
+          "type": "OUTPUT",
+          "place": "Web_Livres",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "inhibitorArcs": [],
+      "weight": 0.4,
+      "id": "t6",
+      "x": 900,
+      "y": 270
+    },
+    {
+      "name": "Consulta_BD",
+      "type": "IMMEDIATE",
+      "firingPolicy": "SINGLE_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Decisao",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [
+        {
+          "type": "OUTPUT",
+          "place": "Fila_BD",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "inhibitorArcs": [],
+      "weight": 0.6,
+      "id": "t7",
+      "x": 1005,
+      "y": 160,
+      "labelX": 1005,
+      "labelY": 120
+    },
+    {
+      "name": "Inicia_BD",
+      "type": "IMMEDIATE",
+      "firingPolicy": "SINGLE_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Fila_BD",
+          "multiplicity": 1,
+          "weight": 1
+        },
+        {
+          "type": "INPUT",
+          "place": "BD_Livres",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [
+        {
+          "type": "OUTPUT",
+          "place": "Consultando_BD",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "inhibitorArcs": [],
+      "weight": 1,
+      "id": "t8",
+      "x": 900,
+      "y": 380,
+      "labelX": 900,
+      "labelY": 340
+    },
+    {
+      "name": "Finaliza_BD",
+      "type": "TIMED",
+      "firingPolicy": "INFINITY_SERVER",
+      "raceType": "RACE_WITH_ENABLING_MEMORY",
+      "priority": 1,
+      "inputArcs": [
+        {
+          "type": "INPUT",
+          "place": "Consultando_BD",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "outputArcs": [
+        {
+          "type": "OUTPUT",
+          "place": "BD_Livres",
+          "multiplicity": 1,
+          "weight": 1
+        },
+        {
+          "type": "OUTPUT",
+          "place": "Web_Livres",
+          "multiplicity": 1,
+          "weight": 1
+        }
+      ],
+      "inhibitorArcs": [],
+      "distribution": {
+        "type": "exponential",
+        "parameters": {
+          "Mean delay": "D_BD"
+        }
+      },
+      "id": "t9",
+      "x": 585,
+      "y": 380,
+      "labelX": 519,
+      "labelY": 380
+    }
+  ],
+  "visualElements": [],
+  "arcs": [
+    {
+      "id": "a1",
+      "source": "p1",
+      "target": "t1",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a2",
+      "source": "t1",
+      "target": "p1",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a3",
+      "source": "t1",
+      "target": "p2",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a4",
+      "source": "p2",
+      "target": "t3",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a5",
+      "source": "p2",
+      "target": "t2",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a6",
+      "source": "p3",
+      "target": "t2",
+      "type": "inhibitor",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a7",
+      "source": "p3",
+      "target": "t3",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a8",
+      "source": "t3",
+      "target": "p4",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a9",
+      "source": "p4",
+      "target": "t4",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a10",
+      "source": "p5",
+      "target": "t4",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a11",
+      "source": "t4",
+      "target": "p3",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a12",
+      "source": "t4",
+      "target": "p6",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a13",
+      "source": "p6",
+      "target": "t5",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a14",
+      "source": "t5",
+      "target": "p7",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a15",
+      "source": "p7",
+      "target": "t6",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a16",
+      "source": "t6",
+      "target": "p5",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a17",
+      "source": "p7",
+      "target": "t7",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a18",
+      "source": "t7",
+      "target": "p8",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a19",
+      "source": "p8",
+      "target": "t8",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a20",
+      "source": "p9",
+      "target": "t8",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a21",
+      "source": "t8",
+      "target": "p10",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a22",
+      "source": "p10",
+      "target": "t9",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a23",
+      "source": "t9",
+      "target": "p9",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    },
+    {
+      "id": "a24",
+      "source": "t9",
+      "target": "p5",
+      "type": "normal",
+      "weight": "1",
+      "lineType": "straight"
+    }
+  ],
+  "chartSquare": false,
+  "timeUnit": "ms"
+}
